@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.label1 = new System.Windows.Forms.Label();
+            this.timeNow = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.Startknop = new System.Windows.Forms.Button();
@@ -42,18 +42,22 @@
             this.label9 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.timerHour = new System.Windows.Forms.Label();
+            this.timerMin = new System.Windows.Forms.Label();
+            this.timerSec = new System.Windows.Forms.Label();
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
-            // label1
+            // timeNow
             // 
-            this.label1.Font = new System.Drawing.Font("Arial Rounded MT Bold", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.Color.Snow;
-            this.label1.Location = new System.Drawing.Point(12, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(315, 121);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "00:00";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.timeNow.Font = new System.Drawing.Font("Arial Rounded MT Bold", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.timeNow.ForeColor = System.Drawing.Color.Snow;
+            this.timeNow.Location = new System.Drawing.Point(12, 9);
+            this.timeNow.Name = "timeNow";
+            this.timeNow.Size = new System.Drawing.Size(315, 121);
+            this.timeNow.TabIndex = 0;
+            this.timeNow.Text = "00:00";
+            this.timeNow.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label2
             // 
@@ -88,7 +92,7 @@
             this.Startknop.TabIndex = 3;
             this.Startknop.Text = "Start";
             this.Startknop.UseVisualStyleBackColor = true;
-            this.Startknop.Click += new System.EventHandler(this.button1_Click);
+            this.Startknop.Click += new System.EventHandler(this.Start_Click);
             // 
             // button2
             // 
@@ -99,7 +103,7 @@
             this.button2.TabIndex = 4;
             this.button2.Text = "Stop";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.button2.Click += new System.EventHandler(this.Stop_Click);
             // 
             // label4
             // 
@@ -182,12 +186,52 @@
             this.button3.TabIndex = 11;
             this.button3.Text = "Reset";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.button3.Click += new System.EventHandler(this.Reset_Click);
             // 
             // timer1
             // 
             this.timer1.Enabled = true;
+            this.timer1.Interval = 10;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // timerHour
+            // 
+            this.timerHour.Font = new System.Drawing.Font("Arial Rounded MT Bold", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.timerHour.ForeColor = System.Drawing.Color.Snow;
+            this.timerHour.Location = new System.Drawing.Point(18, 228);
+            this.timerHour.Name = "timerHour";
+            this.timerHour.Size = new System.Drawing.Size(111, 109);
+            this.timerHour.TabIndex = 12;
+            this.timerHour.Text = "00";
+            this.timerHour.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // timerMin
+            // 
+            this.timerMin.Font = new System.Drawing.Font("Arial Rounded MT Bold", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.timerMin.ForeColor = System.Drawing.Color.Snow;
+            this.timerMin.Location = new System.Drawing.Point(135, 228);
+            this.timerMin.Name = "timerMin";
+            this.timerMin.Size = new System.Drawing.Size(111, 109);
+            this.timerMin.TabIndex = 13;
+            this.timerMin.Text = "00";
+            this.timerMin.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // timerSec
+            // 
+            this.timerSec.Font = new System.Drawing.Font("Arial Rounded MT Bold", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.timerSec.ForeColor = System.Drawing.Color.Snow;
+            this.timerSec.Location = new System.Drawing.Point(252, 228);
+            this.timerSec.Name = "timerSec";
+            this.timerSec.Size = new System.Drawing.Size(111, 109);
+            this.timerSec.TabIndex = 14;
+            this.timerSec.Text = "00";
+            this.timerSec.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // timer2
+            // 
+            this.timer2.Enabled = true;
+            this.timer2.Interval = 10;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
             // Form1
             // 
@@ -196,6 +240,9 @@
             this.AutoSize = true;
             this.BackColor = System.Drawing.SystemColors.WindowText;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.timerSec);
+            this.Controls.Add(this.timerMin);
+            this.Controls.Add(this.timerHour);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
@@ -207,10 +254,11 @@
             this.Controls.Add(this.Startknop);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.timeNow);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Form1";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.From1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -218,7 +266,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label timeNow;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button Startknop;
@@ -231,6 +279,10 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Label timerHour;
+        private System.Windows.Forms.Label timerMin;
+        private System.Windows.Forms.Label timerSec;
+        private System.Windows.Forms.Timer timer2;
     }
 }
 
