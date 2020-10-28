@@ -1,17 +1,25 @@
 ﻿using System;
 using System.Drawing.Text;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
 namespace GroeneOpdracht_TaxiKosten_Rekenaar
 {
-    public partial class Form1 : Form
+    public partial class totaleBedrag : Form
     {
         int timerHours, timerMins, timerSecs, timerMiniSecs;
+        string YearMonthDayNumbers, TodayLabel;
         bool isActive;
 
-        public Form1()
+        public totaleBedrag()
         {
             InitializeComponent();
+
+            YearMonthDayNumbers = DateTime.Now.Year.ToString() + "-" 
+            + DateTime.Now.Month.ToString() + "-" + DateTime.Now.Day.ToString();
+
+            labelDatum.Text = YearMonthDayNumbers;
+            labelDag.Text = DateTime.Now.DayOfWeek.ToString();
 
             ResetTime();
 
@@ -71,6 +79,7 @@ namespace GroeneOpdracht_TaxiKosten_Rekenaar
         {
             isActive = false;
             ChangeColorToSnow();
+
         }
 
         private void Reset_Click(object sender, EventArgs e)
@@ -78,8 +87,9 @@ namespace GroeneOpdracht_TaxiKosten_Rekenaar
             isActive = false;
             ResetTime();
             ChangeColorToSnow();
-
+            ResetCalc();
         }
+
         private void ResetTime()
         {
             timerHours = 00;
@@ -87,6 +97,69 @@ namespace GroeneOpdracht_TaxiKosten_Rekenaar
             timerSecs = 00;
             timerMiniSecs = 0;
         }
+
+        private void geredenKm_TextChanged(object sender, EventArgs e)
+        {
+            //De berekening wordt pas gedaan als het aantal gereden Km is ingevoerd
+            if (timerMiniSecs != 0)
+            {
+
+                //Berekening totale aantal minuten
+                double SecsInMins = timerSecs / 60;
+                SecsInMins = Math.Round(SecsInMins);
+                int intSecsInMins = Convert.ToInt32(SecsInMins);
+
+                int HoursInMins = timerHours * 60;
+
+                int TotalMins = intSecsInMins + timerMins + HoursInMins;
+                tijdInMin.Text = TotalMins.ToString();
+
+                //Berekening bedrag van totale minuten + overdag of avondtijden overweging
+                double bedragMins;
+                if (timerHours >= 8 && timerHours <= 18)
+                    bedragMins = TotalMins * 0.25;
+                else
+                    bedragMins = TotalMins * 0.45;
+
+
+                //Kijken of weekendtoeslag relevant is
+                bool weekendToeslagErbij;
+                if ((((labelDag.Text == "Friday" && timerHours >= 22) ||
+                    (labelDag.Text == "Saterday") ||
+                    (labelDag.Text == "Sunday") ||
+                    (labelDag.Text == "Monday" && timerHours <= 6))))
+                {
+                    weekendToeslag.Text = "Ja";
+                    weekendToeslagErbij = true;
+                }
+                else
+                {
+                    weekendToeslag.Text = "Nee";
+                    weekendToeslagErbij = false;
+                }
+
+                //Het totale bedrag berekenen
+                double weekendToeslagBedrag;
+                string geheleBedrag;
+                if (weekendToeslagErbij == true)
+                {
+                    weekendToeslagBedrag = (bedragMins + Convert.ToDouble(geredenKm.Text) / 100) * 15;
+                    geheleBedrag = bedragMins + geredenKm.Text + weekendToeslagBedrag;
+                }
+                else
+                {
+                    geheleBedrag = bedragMins + geredenKm.Text;
+                }
+                Totaal.Text = geheleBedrag.TrimStart('0');
+
+            }
+        }
+
+        private void geredenKm_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //Zorg ervoor dat Textbox alleen nummers toelaat
+        }
+
         private void ChangeColorToRed()
         {
             timerHour.ForeColor = System.Drawing.Color.Red;
@@ -104,6 +177,13 @@ namespace GroeneOpdracht_TaxiKosten_Rekenaar
             timerHour.Text = timerHours.ToString();
             timerMin.Text = timerMins.ToString();
             timerSec.Text = timerSecs.ToString();
+        }
+        private void ResetCalc()
+        {
+            geredenKm.Text = "";
+            tijdInMin.Text = "";
+            weekendToeslag.Text = "";
+            Totaal.Text = "";
         }
     }
 }
